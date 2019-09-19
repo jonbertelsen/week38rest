@@ -19,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import utils.Settings;
 import utils.EMF_Creator.DbSelector;
 import utils.EMF_Creator.Strategy;
 
@@ -67,15 +66,18 @@ public class PersonFacadeTest {
     @BeforeEach
     public void setUp() {
         EntityManager em = emf.createEntityManager();
-        p1 = new Person("Jønke", "Jensen", "1212122");
-        p2 = new Person("Jørgen", "Fehår", "3232222");
-        p3 = new Person("Blondie", "Jensen", "323232");
+        p1 = new Person("Jønke", "Jensen", "1212122","Ndr Frihavnsgade 29","2100","Kbh Ø");
+        p2 = new Person("Jørgen", "Fehår", "3232222","Østerbrogade 2", "2200","Kbh N");
+        p3 = new Person("Blondie", "Jensen", "323232","Storegade 3","3700","Rønne");
 
         try {
             em.getTransaction().begin();
-            em.createNamedQuery("Person.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Person.deleteAllRows").executeUpdate(); 
+            em.createNamedQuery("Address.deleteAllRows").executeUpdate();
             em.persist(p1);
+            //em.persist(p2.getAddress());
             em.persist(p2);
+            //em.persist(p2.getAddress());
             em.persist(p3);
             em.getTransaction().commit();
         } finally {
@@ -106,17 +108,17 @@ public class PersonFacadeTest {
         
         // Method one: testing for a known exception
         try {
-            p = facade.addPerson("", "Petersen", "131212");
+            p = facade.addPerson("", "Petersen", "131212","","","");
         } catch (MissingInputException e){
             assertThat(e.getMessage(), is("First Name and/or Last Name is missing"));
         }
         
         // Method two: testing for a known exception with assertion
         Assertions.assertThrows(MissingInputException.class, () -> {
-            final Person person = facade.addPerson("", "Petersen", "131212");
+            final Person person = facade.addPerson("", "Petersen", "131212","","","");
         });
         
-        p = facade.addPerson("Jon", "Snow", "2112211");
+        p = facade.addPerson("Jon", "Snow", "2112211","Bygaden 28","2100","Kbh Ø");
         assertNotNull(p.getId());
         EntityManager em = emf.createEntityManager();
         try {

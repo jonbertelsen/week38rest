@@ -2,12 +2,14 @@ package entities;
 
 import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 
 
@@ -25,16 +27,19 @@ public class Person implements Serializable {
     private String firstName;
     private String lastName;
     private String phone;
+    @OneToOne(cascade = CascadeType.PERSIST)
+    private Address address;
     
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date created;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date lastEdited;
     
-    public Person(String firstName, String lastName, String phone) {
+    public Person(String firstName, String lastName, String phone, String street, String zip, String city) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
+        this.address = new Address(street,zip,city);
         this.created = new Date();
         this.lastEdited = this.created;
     }
@@ -84,6 +89,14 @@ public class Person implements Serializable {
 
     public void setLastEdited() {
         this.lastEdited = new Date();
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
     }
       
 }

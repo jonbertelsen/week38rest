@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dtomappers.PersonDTO;
 import dtomappers.PersonsDTO;
+import entities.Address;
 import entities.Person;
 import exceptions.MissingInputException;
 import exceptions.PersonNotFoundException;
@@ -54,7 +55,7 @@ public class PersonResource {
     @Consumes({MediaType.APPLICATION_JSON})
     public String addPerson(String person) throws MissingInputException {
         PersonDTO p = GSON.fromJson(person, PersonDTO.class);
-        Person pNew = FACADE.addPerson(p.getfName(), p.getlName(), p.getPhone());
+        Person pNew = FACADE.addPerson(p.getfName(), p.getlName(), p.getPhone(), p.getStreet(), p.getZip(), p.getCity());
         return GSON.toJson(new PersonDTO(pNew));
     }
     
@@ -64,7 +65,7 @@ public class PersonResource {
     @Consumes({MediaType.APPLICATION_JSON})
     public String updatePerson(@PathParam("id") long id,  String person) throws PersonNotFoundException, MissingInputException {
         PersonDTO pDTO = GSON.fromJson(person, PersonDTO.class);
-        Person p = new Person(pDTO.getfName(), pDTO.getlName(), pDTO.getPhone());
+        Person p = new Person(pDTO.getfName(), pDTO.getlName(), pDTO.getPhone(),pDTO.getStreet(),pDTO.getZip(), pDTO.getCity());
         p.setId(id);
         Person pNew = FACADE.editPerson(p);
         return GSON.toJson(new PersonDTO(pNew));

@@ -1,8 +1,10 @@
 package facades;
 
+import entities.Address;
 import entities.Person;
 import exceptions.MissingInputException;
 import exceptions.PersonNotFoundException;
+import java.util.HashSet;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -48,21 +50,21 @@ public class PersonFacade implements IPersonFacade {
     }
 
     @Override
-    public Person addPerson(String fName, String lName, String phone) throws MissingInputException {
+    public Person addPerson(String fName, String lName, String phone, String street, String zip, String city) throws MissingInputException {
         if ((fName.length() == 0) || (lName.length() == 0)){
            throw new MissingInputException("First Name and/or Last Name is missing"); 
         }
         EntityManager em = getEntityManager();
-        Person person = new Person(fName, lName, phone);
-        
-       try {
-           em.getTransaction().begin();
-           em.persist(person);
-           em.getTransaction().commit();
-       } finally {
-           em.close();
-       }
-       return person;
+        Person person = new Person(fName, lName, phone, street, zip, city);
+   
+        try {
+            em.getTransaction().begin();
+            em.persist(person);
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+        return person;
     }
 
     @Override
@@ -74,6 +76,7 @@ public class PersonFacade implements IPersonFacade {
           }
        try {
            em.getTransaction().begin();
+           em.remove(person.getAddress());
            em.remove(person);
            em.getTransaction().commit();
        } finally {
@@ -121,9 +124,13 @@ public class PersonFacade implements IPersonFacade {
         person.setLastName(p.getLastName());
         person.setPhone(p.getPhone());
         person.setLastEdited();
+        person.getAddress().setStreet(p.getAddress().getStreet());
+        person.getAddress().setZip(p.getAddress().getZip());
+        person.getAddress().setCity(p.getAddress().getCity());
         
         try {
             em.getTransaction().begin();
+            //em.merge(person.getAddress());
             em.merge(person);
             em.getTransaction().commit();
             return person;

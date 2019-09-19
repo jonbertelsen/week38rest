@@ -23,6 +23,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import utils.EMF_Creator.DbSelector;
 import utils.EMF_Creator.Strategy;
@@ -74,15 +75,18 @@ public class PersonResourceTest {
     @BeforeEach
     public void setUp() {
        EntityManager em = emf.createEntityManager();
-        p1 = new Person("Jønke", "Jensen", "1212122");
-        p2 = new Person("Jørgen", "Fehår", "3232222");
-        p3 = new Person("Blondie", "Jensen", "323232");
+       p1 = new Person("Jønke", "Jensen", "1212122","Ndr Frihavnsgade 29","2100","Kbh Ø");
+        p2 = new Person("Jørgen", "Fehår", "3232222","Østerbrogade 2", "2200","Kbh N");
+        p3 = new Person("Blondie", "Jensen", "323232","Storegade 3","3700","Rønne");
 
         try {
             em.getTransaction().begin();
             em.createNamedQuery("Person.deleteAllRows").executeUpdate();
+            
             em.persist(p1);
+            em.persist(p2.getAddress());
             em.persist(p2);
+            em.persist(p2.getAddress());
             em.persist(p3);
             em.getTransaction().commit();
         } finally {
@@ -138,14 +142,14 @@ public class PersonResourceTest {
     public void addPerson(){
         given()
                 .contentType(ContentType.JSON)
-                .body(new PersonDTO("Jon", "Snow", "123"))
+                .body(new PersonDTO("Jon", "Snow", "2112211","Bygaden 28","2100","Kbh Ø"))
                 .when()
                 
                 .post("person")
                 .then()
                 .body("fName", equalTo("Jon"))
                 .body("lName", equalTo("Snow"))
-                .body("phone", equalTo("123"))
+                .body("phone", equalTo("2112211"))
                 .body("id", notNullValue());
     }
     
