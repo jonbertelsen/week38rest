@@ -86,15 +86,7 @@ public class PersonDTO {
         if (this.id != other.id) {
             return false;
         }
-        if (!Objects.equals(this.fName, other.fName)) {
-            return false;
-        }
-        if (!Objects.equals(this.lName, other.lName)) {
-            return false;
-        }
-        if (!Objects.equals(this.phone, other.phone)) {
-            return false;
-        }
+       
         return true;
     }
 

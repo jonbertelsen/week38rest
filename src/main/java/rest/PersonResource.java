@@ -7,9 +7,7 @@ import dtomappers.PersonsDTO;
 import entities.Person;
 import utils.EMF_Creator;
 import facades.PersonFacade;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -93,6 +91,4 @@ public class PersonResource {
         long count = FACADE.getPersonCount();
         return "{\"count\":"+count+"}";  
     }
-
- 
 }
