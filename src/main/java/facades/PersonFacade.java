@@ -1,6 +1,7 @@
 package facades;
 
 import entities.Person;
+import exceptions.PersonNotFoundException;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -61,9 +62,12 @@ public class PersonFacade implements IPersonFacade {
     }
 
     @Override
-    public Person deletePerson(long id) {
+    public Person deletePerson(long id) throws PersonNotFoundException {
          EntityManager em = getEntityManager();
           Person person = em.find(Person.class, id);
+          if (person == null) {
+            throw new PersonNotFoundException(String.format("Person with id: (%d) not found", id));
+          }
        try {
            em.getTransaction().begin();
            em.remove(person);
@@ -75,10 +79,13 @@ public class PersonFacade implements IPersonFacade {
     }
 
     @Override
-    public Person getPerson(long id) {
+    public Person getPerson(long id) throws PersonNotFoundException {
        EntityManager em = getEntityManager();
        try {
            Person person = em.find(Person.class, id);
+           if (person == null) {
+                throw new PersonNotFoundException(String.format("Person with id: (%d) not found", id));
+            }
            return person;
        } finally {
            em.close();
@@ -96,10 +103,13 @@ public class PersonFacade implements IPersonFacade {
     }
 
     @Override
-    public Person editPerson(Person p) {
+    public Person editPerson(Person p) throws PersonNotFoundException {
         
         EntityManager em = getEntityManager();
         Person person = em.find(Person.class, p.getId());
+        if (person == null) {
+            throw new PersonNotFoundException(String.format("Person with id: (%d) not found", p.getId()));
+        }
         
         person.setFirstName(p.getFirstName());
         person.setLastName(p.getLastName());

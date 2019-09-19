@@ -2,6 +2,7 @@ package facades;
 
 import utils.EMF_Creator;
 import entities.Person;
+import exceptions.PersonNotFoundException;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -90,7 +91,7 @@ public class PersonFacadeTest {
     }
 
     @Test
-    public void testGetPerson() {
+    public void testGetPerson() throws PersonNotFoundException {
         Person person = facade.getPerson(p1.getId());
         assertEquals("Jønke", person.getFirstName(), "Expects to find Jønke");
     }
@@ -109,7 +110,7 @@ public class PersonFacadeTest {
     }
 
     @Test
-    public void testDeletePerson() {
+    public void testDeletePerson() throws PersonNotFoundException {
         long p1Id = p1.getId();
         long p2Id = p2.getId();
         facade.deletePerson(p1Id);
@@ -131,7 +132,7 @@ public class PersonFacadeTest {
     }
     
     @Test
-    public void testEditPerson() {
+    public void testEditPerson() throws PersonNotFoundException {
         p3.setLastName("Hansen");
         Person p1New = facade.editPerson(p3);
         assertEquals(p1New.getLastName(), p3.getLastName());

@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import dtomappers.PersonDTO;
 import dtomappers.PersonsDTO;
 import entities.Person;
+import exceptions.PersonNotFoundException;
 import utils.EMF_Creator;
 import facades.PersonFacade;
 import java.util.List;
@@ -41,8 +42,9 @@ public class PersonResource {
     @Path("{id}")
     @GET
     @Produces({MediaType.APPLICATION_JSON})
-    public String getPerson(@PathParam("id") long id ){
+    public String getPerson(@PathParam("id") long id ) throws PersonNotFoundException {
         Person p = FACADE.getPerson(id);
+        
         return GSON.toJson(new PersonDTO(p));
     }
     
@@ -59,7 +61,7 @@ public class PersonResource {
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
-    public String updatePerson(@PathParam("id") long id,  String person){
+    public String updatePerson(@PathParam("id") long id,  String person) throws PersonNotFoundException {
         PersonDTO pDTO = GSON.fromJson(person, PersonDTO.class);
         Person p = new Person(pDTO.getfName(), pDTO.getlName(), pDTO.getPhone());
         p.setId(id);
@@ -70,7 +72,7 @@ public class PersonResource {
     @DELETE
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public String deletePerson(@PathParam("id") long id){
+    public String deletePerson(@PathParam("id") long id) throws PersonNotFoundException {
         Person pDeleted = FACADE.deletePerson(id);
         //return GSON.toJson(new PersonDTO(pDeleted));
         return "{\"status\":\"deleted\"}";
