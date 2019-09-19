@@ -51,7 +51,7 @@ public class PersonResource {
     @POST
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
-    public String addPerson(String person){
+    public String addPerson(String person) {
         PersonDTO p = GSON.fromJson(person, PersonDTO.class);
         Person pNew = FACADE.addPerson(p.getfName(), p.getlName(), p.getPhone());
         return GSON.toJson(new PersonDTO(pNew));

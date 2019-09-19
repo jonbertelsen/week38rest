@@ -1,6 +1,7 @@
 package facades;
 
 import entities.Person;
+import exceptions.MissingInputException;
 import exceptions.PersonNotFoundException;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -47,7 +48,10 @@ public class PersonFacade implements IPersonFacade {
     }
 
     @Override
-    public Person addPerson(String fName, String lName, String phone) {
+    public Person addPerson(String fName, String lName, String phone) throws MissingInputException {
+        if ((fName.length() == 0) || (lName.length() == 0)){
+           throw new MissingInputException("First Name and/or Last Name is missing"); 
+        }
         EntityManager em = getEntityManager();
         Person person = new Person(fName, lName, phone);
         
@@ -103,8 +107,10 @@ public class PersonFacade implements IPersonFacade {
     }
 
     @Override
-    public Person editPerson(Person p) throws PersonNotFoundException {
-        
+    public Person editPerson(Person p) throws PersonNotFoundException, MissingInputException {
+        if ((p.getFirstName().length() == 0) || (p.getLastName().length() == 0)){
+           throw new MissingInputException("First Name and/or Last Name is missing"); 
+        }
         EntityManager em = getEntityManager();
         Person person = em.find(Person.class, p.getId());
         if (person == null) {

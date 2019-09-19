@@ -2,12 +2,16 @@ package facades;
 
 import utils.EMF_Creator;
 import entities.Person;
+import exceptions.MissingInputException;
 import exceptions.PersonNotFoundException;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -97,8 +101,22 @@ public class PersonFacadeTest {
     }
 
     @Test
-    public void testAddPerson() {
-        Person p = facade.addPerson("Jon", "Snow", "2112211");
+    public void testAddPerson() throws MissingInputException {
+        Person p;
+        
+        // Method one: testing for a known exception
+        try {
+            p = facade.addPerson("", "Petersen", "131212");
+        } catch (MissingInputException e){
+            assertThat(e.getMessage(), is("First Name and/or Last Name is missing"));
+        }
+        
+        // Method two: testing for a known exception with assertion
+        Assertions.assertThrows(MissingInputException.class, () -> {
+            final Person person = facade.addPerson("", "Petersen", "131212");
+        });
+        
+        p = facade.addPerson("Jon", "Snow", "2112211");
         assertNotNull(p.getId());
         EntityManager em = emf.createEntityManager();
         try {
@@ -132,7 +150,7 @@ public class PersonFacadeTest {
     }
     
     @Test
-    public void testEditPerson() throws PersonNotFoundException {
+    public void testEditPerson() throws PersonNotFoundException, MissingInputException {
         p3.setLastName("Hansen");
         Person p1New = facade.editPerson(p3);
         assertEquals(p1New.getLastName(), p3.getLastName());
