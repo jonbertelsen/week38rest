@@ -2,11 +2,15 @@ package facades;
 
 import utils.EMF_Creator;
 import entities.Person;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +24,7 @@ public class PersonFacadeTest {
 
     private static EntityManagerFactory emf;
     private static PersonFacade facade;
+    private static Person p1, p2, p3;
 
     public PersonFacadeTest() {
     }
@@ -43,8 +48,8 @@ public class PersonFacadeTest {
      */
     @BeforeAll
     public static void setUpClassV2() {
-       emf = EMF_Creator.createEntityManagerFactory(DbSelector.TEST,Strategy.DROP_AND_CREATE);
-       facade = PersonFacade.getFacadeExample(emf);
+        emf = EMF_Creator.createEntityManagerFactory(DbSelector.TEST, Strategy.DROP_AND_CREATE);
+        facade = PersonFacade.getFacadeExample(emf);
     }
 
     @AfterAll
@@ -57,12 +62,16 @@ public class PersonFacadeTest {
     @BeforeEach
     public void setUp() {
         EntityManager em = emf.createEntityManager();
+        p1 = new Person("Jønke", "Jensen", "1212122");
+        p2 = new Person("Jørgen", "Fehår", "3232222");
+        p3 = new Person("Blondie", "Jensen", "323232");
+
         try {
             em.getTransaction().begin();
             em.createNamedQuery("Person.deleteAllRows").executeUpdate();
-            em.persist(new Person("Jønke", "Jensen","1212122"));
-            em.persist(new Person("Jørgen", "Fehår", "3232222"));
-            em.persist(new Person("Blondie", "Totenschlager", "323232"));
+            em.persist(p1);
+            em.persist(p2);
+            em.persist(p3);
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -76,8 +85,57 @@ public class PersonFacadeTest {
 
     // TODO: Delete or change this method 
     @Test
-    public void testAFacadeMethod() {
+    public void testAllFacadeMethod() {
         assertEquals(3, facade.getPersonCount(), "Expects two rows in the database");
+    }
+
+    @Test
+    public void testGetPerson() {
+        Person person = facade.getPerson(p1.getId());
+        assertEquals("Jønke", person.getFirstName(), "Expects to find Jønke");
+    }
+
+    @Test
+    public void testAddPerson() {
+        Person p = facade.addPerson("Jon", "Snow", "2112211");
+        assertNotNull(p.getId());
+        EntityManager em = emf.createEntityManager();
+        try {
+            List<Person> persons = em.createQuery("select p from Person p").getResultList();
+            assertEquals(4, persons.size(), "Expects 4 persons in the DB");
+        } finally {
+            em.close();
+        }
+    }
+
+    @Test
+    public void testDeletePerson() {
+        long p1Id = p1.getId();
+        long p2Id = p2.getId();
+        facade.deletePerson(p1Id);
+        EntityManager em = emf.createEntityManager();
+        try {
+            List<Person> persons = em.createQuery("select p from Person p").getResultList();
+            assertEquals(2, persons.size(), "Expects 2 persons in the DB");
+
+            persons = em.createQuery("select p from Person p WHERE p.id = " + p1Id).getResultList();
+            assertEquals(0, persons.size(), "Expects 2 persons in the DB");
+            Person p = em.find(Person.class, p1Id);
+            assertNull(p, "Expects that person is removed and p is null");
+
+            p = em.find(Person.class, p2Id);
+            assertNotNull(p, "Expects that person is removed and p is null");
+        } finally {
+            em.close();
+        }
+    }
+    
+    @Test
+    public void testEditPerson() {
+        p3.setLastName("Hansen");
+        Person p1New = facade.editPerson(p3);
+        assertEquals(p1New.getLastName(), p3.getLastName());
+        assertNotEquals(p3.getLastName(),"Jensen");
     }
 
 }

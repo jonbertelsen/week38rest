@@ -7,9 +7,12 @@ import dtomappers.PersonsDTO;
 import entities.Person;
 import utils.EMF_Creator;
 import facades.PersonFacade;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -33,8 +36,46 @@ public class PersonResource {
             
     @GET
     @Produces({MediaType.APPLICATION_JSON})
-    public String demo() {
-        return "{\"msg\":\"Hello World\"}";
+    public String serverIsUp() {
+        return "{\"msg\":\"Your Person API is up and running\"}";
+    }
+    
+    @Path("{id}")
+    @GET
+    @Produces({MediaType.APPLICATION_JSON})
+    public String getPerson(@PathParam("id") long id ){
+        Person p = FACADE.getPerson(id);
+        return GSON.toJson(new PersonDTO(p));
+    }
+    
+    @POST
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
+    public String addPerson(String person){
+        PersonDTO p = GSON.fromJson(person, PersonDTO.class);
+        Person pNew = FACADE.addPerson(p.getfName(), p.getlName(), p.getPhone());
+        return GSON.toJson(new PersonDTO(pNew));
+    }
+    
+    @PUT
+    @Path("{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
+    public String updatePerson(@PathParam("id") long id,  String person){
+        PersonDTO pDTO = GSON.fromJson(person, PersonDTO.class);
+        Person p = new Person(pDTO.getfName(), pDTO.getlName(), pDTO.getPhone());
+        p.setId(id);
+        Person pNew = FACADE.editPerson(p);
+        return GSON.toJson(new PersonDTO(pNew));
+    }
+    
+    @DELETE
+    @Path("{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public String deletePerson(@PathParam("id") long id){
+        Person pDeleted = FACADE.deletePerson(id);
+        //return GSON.toJson(new PersonDTO(pDeleted));
+        return "{\"status\":\"deleted\"}";
     }
     
     @Path("all")

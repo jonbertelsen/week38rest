@@ -1,6 +1,7 @@
 package facades;
 
 import entities.Person;
+import java.util.HashSet;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -48,17 +49,42 @@ public class PersonFacade implements IPersonFacade {
 
     @Override
     public Person addPerson(String fName, String lName, String phone) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        EntityManager em = getEntityManager();
+        Person person = new Person(fName, lName, phone);
+        
+       try {
+           em.getTransaction().begin();
+           em.persist(person);
+           em.getTransaction().commit();
+       } finally {
+           em.close();
+       }
+       return person;
     }
 
     @Override
-    public Person deletePerson(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Person deletePerson(long id) {
+         EntityManager em = getEntityManager();
+          Person person = em.find(Person.class, id);
+       try {
+           em.getTransaction().begin();
+           em.remove(person);
+           em.getTransaction().commit();
+       } finally {
+           em.close();
+       }
+       return person;
     }
 
     @Override
-    public Person getPerson(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Person getPerson(long id) {
+       EntityManager em = getEntityManager();
+       try {
+           Person person = em.find(Person.class, id);
+           return person;
+       } finally {
+           em.close();
+       }
     }
 
     @Override
@@ -73,7 +99,23 @@ public class PersonFacade implements IPersonFacade {
 
     @Override
     public Person editPerson(Person p) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        EntityManager em = getEntityManager();
+        Person person = em.find(Person.class, p.getId());
+        
+        person.setFirstName(p.getFirstName());
+        person.setLastName(p.getLastName());
+        person.setPhone(p.getPhone());
+        person.setLastEdited();
+        
+        try {
+            em.getTransaction().begin();
+            em.merge(person);
+            em.getTransaction().commit();
+            return person;
+        } finally {  
+          em.close();
+        }
     }
 
 }
