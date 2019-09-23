@@ -19,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import utils.Settings;
 import utils.EMF_Creator.DbSelector;
 import utils.EMF_Creator.Strategy;
 

@@ -45,7 +45,6 @@ public class PersonResource {
     @Produces({MediaType.APPLICATION_JSON})
     public String getPerson(@PathParam("id") long id ) throws PersonNotFoundException {
         Person p = FACADE.getPerson(id);
-        
         return GSON.toJson(new PersonDTO(p));
     }
     
