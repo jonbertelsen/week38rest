@@ -6,12 +6,16 @@
 package entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 /**
@@ -32,8 +36,9 @@ public class Address implements Serializable {
     private String street;
     private String zip;
     private String city;
-    @OneToOne(mappedBy = "address")
-    private Person person;
+    
+    @OneToMany(mappedBy="address")
+    private List<Person> persons = new ArrayList();
 
     public Address() {
     }
@@ -52,8 +57,6 @@ public class Address implements Serializable {
         this.id = id;
     }
     
-   
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -103,12 +106,12 @@ public class Address implements Serializable {
         this.city = city;
     }
 
-    public Person getPerson() {
-        return person;
+    public List<Person> getPerson() {
+        return persons;
     }
 
-    public void setPerson(Person person) {
-        this.person = person;
+    public void addPerson(Person person) {
+        this.persons.add(person);
     }
     
 }

@@ -4,10 +4,10 @@ import entities.Address;
 import entities.Person;
 import exceptions.MissingInputException;
 import exceptions.PersonNotFoundException;
-import java.util.HashSet;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
 
 /**
  *
@@ -59,6 +59,14 @@ public class PersonFacade implements IPersonFacade {
    
         try {
             em.getTransaction().begin();
+            Query query = em.createQuery("SELECT a FROM Address a WHERE a.street = :street AND a.zip = :zip AND a.city = :city");
+            query.setParameter("street", street);
+            query.setParameter("zip", zip);
+            query.setParameter("city", city);
+            List<Address> addresses = query.getResultList();
+            if (addresses.size() > 0){
+                person.setAddress(addresses.get(0)); // The address already exists
+            }
             em.persist(person);
             em.getTransaction().commit();
         } finally {
@@ -76,7 +84,6 @@ public class PersonFacade implements IPersonFacade {
           }
        try {
            em.getTransaction().begin();
-           em.remove(person.getAddress());
            em.remove(person);
            em.getTransaction().commit();
        } finally {
@@ -127,16 +134,17 @@ public class PersonFacade implements IPersonFacade {
         person.getAddress().setStreet(p.getAddress().getStreet());
         person.getAddress().setZip(p.getAddress().getZip());
         person.getAddress().setCity(p.getAddress().getCity());
-        
+
         try {
             em.getTransaction().begin();
-            //em.merge(person.getAddress());
             em.merge(person);
             em.getTransaction().commit();
             return person;
         } finally {  
           em.close();
         }
+        
+        
     }
 
 }

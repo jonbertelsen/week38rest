@@ -2,6 +2,7 @@ package rest;
 
 import dtomappers.PersonDTO;
 import entities.Person;
+import dtomappers.PersonsDTO;
 import utils.EMF_Creator;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
@@ -23,7 +24,6 @@ import static org.hamcrest.Matchers.notNullValue;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import utils.EMF_Creator.DbSelector;
 import utils.EMF_Creator.Strategy;
@@ -76,8 +76,8 @@ public class PersonResourceTest {
     public void setUp() {
        EntityManager em = emf.createEntityManager();
        p1 = new Person("Jønke", "Jensen", "1212122","Ndr Frihavnsgade 29","2100","Kbh Ø");
-        p2 = new Person("Jørgen", "Fehår", "3232222","Østerbrogade 2", "2200","Kbh N");
-        p3 = new Person("Blondie", "Jensen", "323232","Storegade 3","3700","Rønne");
+       p2 = new Person("Jørgen", "Fehår", "3232222","Østerbrogade 2", "2200","Kbh N");
+       p3 = new Person("Blondie", "Jensen", "323232","Storegade 3","3700","Rønne");
 
         try {
             em.getTransaction().begin();
@@ -144,7 +144,6 @@ public class PersonResourceTest {
                 .contentType(ContentType.JSON)
                 .body(new PersonDTO("Jon", "Snow", "2112211","Bygaden 28","2100","Kbh Ø"))
                 .when()
-                
                 .post("person")
                 .then()
                 .body("fName", equalTo("Jon"))

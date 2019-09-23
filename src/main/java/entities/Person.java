@@ -7,9 +7,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 
 
@@ -27,7 +27,7 @@ public class Person implements Serializable {
     private String firstName;
     private String lastName;
     private String phone;
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private Address address;
     
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -40,6 +40,7 @@ public class Person implements Serializable {
         this.lastName = lastName;
         this.phone = phone;
         this.address = new Address(street,zip,city);
+        this.address.addPerson(this);
         this.created = new Date();
         this.lastEdited = this.created;
     }
@@ -97,6 +98,7 @@ public class Person implements Serializable {
 
     public void setAddress(Address address) {
         this.address = address;
+        this.address.addPerson(this);
     }
       
 }

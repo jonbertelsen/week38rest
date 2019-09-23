@@ -2,6 +2,7 @@ package facades;
 
 import utils.EMF_Creator;
 import entities.Person;
+
 import exceptions.MissingInputException;
 import exceptions.PersonNotFoundException;
 import java.util.List;
@@ -65,9 +66,9 @@ public class PersonFacadeTest {
     //TODO -- Make sure to change the script below to use YOUR OWN entity class
     @BeforeEach
     public void setUp() {
-        EntityManager em = emf.createEntityManager();
+        EntityManager em = emf.createEntityManager(); 
         p1 = new Person("Jønke", "Jensen", "1212122","Ndr Frihavnsgade 29","2100","Kbh Ø");
-        p2 = new Person("Jørgen", "Fehår", "3232222","Østerbrogade 2", "2200","Kbh N");
+        p2 = new Person("Jørgen", "Fehår", "3232222","Ndr Frihavnsgade 29","2100","Kbh Ø");
         p3 = new Person("Blondie", "Jensen", "323232","Storegade 3","3700","Rønne");
 
         try {
@@ -75,9 +76,7 @@ public class PersonFacadeTest {
             em.createNamedQuery("Person.deleteAllRows").executeUpdate(); 
             em.createNamedQuery("Address.deleteAllRows").executeUpdate();
             em.persist(p1);
-            //em.persist(p2.getAddress());
             em.persist(p2);
-            //em.persist(p2.getAddress());
             em.persist(p3);
             em.getTransaction().commit();
         } finally {
@@ -127,6 +126,10 @@ public class PersonFacadeTest {
         } finally {
             em.close();
         }
+    }
+
+    public static void setP1(Person p1) {
+        PersonFacadeTest.p1 = p1;
     }
 
     @Test
