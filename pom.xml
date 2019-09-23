@@ -4,7 +4,7 @@
 
     <groupId>dat.sem3</groupId>
     <artifactId>week38rest</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <packaging>war</packaging>
 
     <name>week38rest</name>
