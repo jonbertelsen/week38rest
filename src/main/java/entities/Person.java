@@ -27,7 +27,7 @@ public class Person implements Serializable {
     private String firstName;
     private String lastName;
     private String phone;
-    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToOne(cascade = { CascadeType.PERSIST })
     private Address address;
     
     @Temporal(javax.persistence.TemporalType.DATE)
